@@ -127,7 +127,7 @@ export default function AdminPanel() {
         <table style={styles.table}>
           <thead>
             <tr>
-              <th style={styles.th}>Email</th>
+              <th style={styles.th}>User ID</th>
               <th style={styles.th}>Verified</th>
               <th style={styles.th}>MFA</th>
               <th style={styles.th}>Layouts</th>
@@ -138,23 +138,23 @@ export default function AdminPanel() {
           <tbody>
             {users.map(user => (
               <tr key={user.id}>
-                <td style={styles.td}>{user.email}</td>
+                <td style={styles.td}><code style={{fontSize: '11px', background: 'rgba(0,217,255,0.1)', padding: '2px 6px', borderRadius: '4px'}}>{user.id}</code></td>
                 <td style={styles.td}><span style={styles.badge(user.emailVerified)}>{user.emailVerified ? '✓ Yes' : '✗ No'}</span></td>
                 <td style={styles.td}><span style={styles.badge(user.mfaEnabled)}>{user.mfaEnabled ? '✓ On' : '✗ Off'}</span></td>
                 <td style={styles.td}>{user._count.layouts}</td>
                 <td style={styles.td}>{new Date(user.createdAt).toLocaleDateString()}</td>
                 <td style={styles.td}>
-                  {deleteConfirm === user.email ? (
+                  {deleteConfirm === user.id ? (
                     <>
-                      <button onClick={() => handleDelete(user.email)} style={styles.confirmBtn}>Confirm Delete</button>
+                      <button onClick={() => handleDelete(user.id)} style={styles.confirmBtn}>Confirm Delete</button>
                       <button onClick={() => setDeleteConfirm(null)} style={styles.cancelBtn}>Cancel</button>
                     </>
                   ) : (
                     <div style={{ display: 'flex', gap: '8px' }}>
                       {!user.emailVerified && (
-                        <button onClick={() => handleVerify(user.email)} style={{ ...styles.dangerBtn, color: '#00d9ff', borderColor: 'rgba(0,217,255,0.4)', background: 'rgba(0,217,255,0.1)' }}>✓ Verify</button>
+                        <button onClick={() => handleVerify(user.id)} style={{ ...styles.dangerBtn, color: '#00d9ff', borderColor: 'rgba(0,217,255,0.4)', background: 'rgba(0,217,255,0.1)' }}>✓ Verify</button>
                       )}
-                      <button onClick={() => setDeleteConfirm(user.email)} style={styles.dangerBtn}>Delete</button>
+                      <button onClick={() => setDeleteConfirm(user.id)} style={styles.dangerBtn}>Delete</button>
                     </div>
                   )}
                 </td>
