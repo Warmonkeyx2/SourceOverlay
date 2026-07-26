@@ -14,11 +14,13 @@
     "react-dom": "^18.2.0",
     "typescript": "^5.1.6",
     "axios": "^1.6.0",
-    "ws": "^8.14.0"
+    "ws": "^8.14.0",
+    "@prisma/client": "^5.7.0"
   },
   "devDependencies": {
     "@types/node": "^20.4.2",
     "@types/react": "^18.2.15",
-    "@types/react-dom": "^18.2.7"
+    "@types/react-dom": "^18.2.7",
+    "prisma": "^5.7.0"
   }
 }
