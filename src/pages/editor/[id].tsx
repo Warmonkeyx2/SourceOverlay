@@ -32,6 +32,10 @@ export default function Editor() {
   const [isDragging, setIsDragging] = useState(false);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [showShare, setShowShare] = useState(false);
+  const [inviteEmail, setInviteEmail] = useState('');
+  const [inviteRole, setInviteRole] = useState('editor');
+  const [inviteStatus, setInviteStatus] = useState('');
   const canvasRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -131,6 +135,23 @@ export default function Editor() {
     setIsDragging(false);
   };
 
+  const handleInvite = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setInviteStatus('');
+    try {
+      const token = localStorage.getItem('token');
+      await axios.post('/api/invites/create', {
+        layoutId: id,
+        email: inviteEmail,
+        role: inviteRole,
+      }, { headers: { Authorization: `Bearer ${token}` } });
+      setInviteStatus('✓ Invite sent!');
+      setInviteEmail('');
+    } catch (err: any) {
+      setInviteStatus('✗ ' + (err.response?.data?.error || 'Failed to send invite'));
+    }
+  };
+
   if (loading) return <p>Loading...</p>;
   if (!layout) return <p>Layout not found</p>;
 
@@ -167,9 +188,44 @@ export default function Editor() {
           <>
             <h2>{layout.title}</h2>
             <button onClick={() => router.push('/')} style={{ marginBottom: '20px', cursor: 'pointer' }}>← Back</button>
-            <button onClick={saveLayout} style={{ width: '100%', padding: '10px', marginBottom: '20px', cursor: 'pointer', backgroundColor: '#28a745', color: 'white', border: 'none', borderRadius: '4px' }}>
+            <button onClick={saveLayout} style={{ width: '100%', padding: '10px', marginBottom: '10px', cursor: 'pointer', backgroundColor: '#28a745', color: 'white', border: 'none', borderRadius: '4px' }}>
               Save Layout
             </button>
+            <button onClick={() => setShowShare(!showShare)} style={{ width: '100%', padding: '10px', marginBottom: '20px', cursor: 'pointer', backgroundColor: '#6f42c1', color: 'white', border: 'none', borderRadius: '4px' }}>
+              {showShare ? '✕ Close Share' : '👥 Share / Invite'}
+            </button>
+
+            {showShare && (
+              <div style={{ background: '#e8e8f8', borderRadius: '8px', padding: '16px', marginBottom: '20px', border: '1px solid #ccc' }}>
+                <h4 style={{ margin: '0 0 12px 0', fontSize: '14px' }}>Invite Collaborator</h4>
+                <form onSubmit={handleInvite}>
+                  <input
+                    type="email"
+                    placeholder="Email address"
+                    value={inviteEmail}
+                    onChange={e => setInviteEmail(e.target.value)}
+                    required
+                    style={{ width: '100%', padding: '8px', marginBottom: '8px', boxSizing: 'border-box' as const, borderRadius: '4px', border: '1px solid #ccc' }}
+                  />
+                  <select
+                    value={inviteRole}
+                    onChange={e => setInviteRole(e.target.value)}
+                    style={{ width: '100%', padding: '8px', marginBottom: '8px', boxSizing: 'border-box' as const, borderRadius: '4px', border: '1px solid #ccc' }}
+                  >
+                    <option value="viewer">Viewer (read only)</option>
+                    <option value="editor">Editor (can edit)</option>
+                  </select>
+                  <button type="submit" style={{ width: '100%', padding: '8px', backgroundColor: '#6f42c1', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>
+                    Send Invite
+                  </button>
+                  {inviteStatus && (
+                    <p style={{ margin: '8px 0 0', fontSize: '13px', color: inviteStatus.startsWith('✓') ? 'green' : 'red' }}>
+                      {inviteStatus}
+                    </p>
+                  )}
+                </form>
+              </div>
+            )}
 
             <h4>Add Source</h4>
             <input
