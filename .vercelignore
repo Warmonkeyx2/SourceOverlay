@@ -1,0 +1,17 @@
+backend/
+database/
+shared/
+ARCHITECTURE.md
+BACKEND_SETUP.md
+DEPLOYMENT.md
+DEPLOYMENT_COMPLETE.md
+DEPLOYMENT_GUIDE.md
+DETAILED_SETUP.md
+TROUBLESHOOTING.md
+QUICKSTART.md
+QUICK_START.md
+Setup.bat
+setup.js
+SETUP_GUIDE.txt
+docker-compose.yml
+Dockerfile
