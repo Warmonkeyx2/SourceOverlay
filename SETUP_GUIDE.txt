@@ -1,0 +1,94 @@
+================================
+SOURCE OVERLAY STUDIO - SETUP
+================================
+
+✓ Node.js v24.16.0 is installed
+✓ Backend updated to use SQLite (file-based, no PostgreSQL needed)
+✓ All code ready to run
+
+SETUP INSTRUCTIONS
+==================
+
+Step 1: Install Dependencies
+----------------------------
+Open PowerShell and run:
+
+  cd "H:\Projects\SOURCE OVERLAY LIVE"
+  npm run setup
+
+This will install all npm packages for both backend and frontend.
+
+
+Step 2: Start the Application  
+------------------------------
+
+OPTION A: Run both services together
+  npm run dev
+
+OPTION B: Run services separately (recommended for debugging)
+  
+  Terminal 1 (Backend):
+    cd "H:\Projects\SOURCE OVERLAY LIVE\backend"
+    npm run dev
+  
+  Terminal 2 (Frontend):
+    cd "H:\Projects\SOURCE OVERLAY LIVE\frontend"
+    npm run dev
+
+
+Step 3: Open in Browser
+------------------------
+Once both services are running, open:
+  
+  Frontend: http://localhost:4500
+  Backend:  http://localhost:4501
+
+
+WHAT'S RUNNING?
+================
+- Backend (Node.js + Express): Runs on port 4501
+  - Uses SQLite database (stored in layouts.db)
+  - REST API for managing layouts
+  
+- Frontend (Next.js + React): Runs on port 4500
+  - Web interface for editing overlays
+  - Drag-and-drop canvas editor
+
+
+FIRST TIME USAGE
+=================
+1. The SQLite database will be created automatically on first run
+2. You'll see "✓ Database initialized with tables" in the backend output
+3. Go to http://localhost:4500 and create your first layout!
+
+
+TROUBLESHOOTING
+================
+
+"npm: command not found" error?
+  → Restart PowerShell after installing Node.js
+  → Or open a new PowerShell window
+
+"Port already in use" error?
+  → Kill existing processes on ports 4500/4501
+  → Or change port in backend/.env or frontend/package.json
+
+"Cannot connect to backend"?
+  → Make sure backend is running (should show: ✓ Server running on :4501)
+  → Check Network tab in browser DevTools
+
+"Database error"?
+  → Restart both services
+  → Delete layouts.db and start fresh
+
+
+FILE LOCATIONS
+================
+- Database: H:\Projects\SOURCE OVERLAY LIVE\backend\layouts.db
+- Backend: H:\Projects\SOURCE OVERLAY LIVE\backend\
+- Frontend: H:\Projects\SOURCE OVERLAY LIVE\frontend\
+
+
+QUESTIONS?
+============
+Check QUICKSTART.md or README.md for more detailed information
