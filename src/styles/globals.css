@@ -1,0 +1,279 @@
+/* Neon Theme Variables */
+:root {
+  --color-bg-dark: #0a0e27;
+  --color-bg-darker: #050810;
+  --color-bg-card: #0f1629;
+  --color-bg-input: #1a1f3a;
+  
+  --color-neon-cyan: #00d9ff;
+  --color-neon-pink: #ff006e;
+  --color-neon-purple: #b537f2;
+  --color-neon-lime: #39ff14;
+  --color-neon-orange: #ff6600;
+  
+  --color-text-primary: #e0e7ff;
+  --color-text-secondary: #a8b5d1;
+  --color-text-muted: #6b7280;
+  
+  --shadow-neon-cyan: 0 0 20px rgba(0, 217, 255, 0.4);
+  --shadow-neon-pink: 0 0 20px rgba(255, 0, 110, 0.4);
+  --shadow-neon-purple: 0 0 20px rgba(181, 55, 242, 0.4);
+  --shadow-neon-lime: 0 0 20px rgba(57, 255, 20, 0.4);
+  
+  --transition-fast: 0.2s ease-in-out;
+  --transition-smooth: 0.4s ease-in-out;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  background-color: var(--color-bg-dark);
+  color: var(--color-text-primary);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#__next {
+  width: 100%;
+  min-height: 100vh;
+}
+
+/* Global text styles */
+h1, h2, h3, h4, h5, h6 {
+  color: var(--color-text-primary);
+  font-weight: 600;
+  letter-spacing: -0.5px;
+}
+
+p {
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+}
+
+a {
+  color: var(--color-neon-cyan);
+  text-decoration: none;
+  transition: all var(--transition-fast);
+}
+
+a:hover {
+  color: var(--color-neon-pink);
+  text-shadow: var(--shadow-neon-pink);
+}
+
+/* Button styles */
+button {
+  font-family: inherit;
+  border: none;
+  border-radius: 6px;
+  padding: 12px 24px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-smooth);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Primary Button */
+.btn-primary {
+  background: linear-gradient(135deg, var(--color-neon-cyan), var(--color-neon-purple));
+  color: var(--color-bg-dark);
+  box-shadow: var(--shadow-neon-cyan);
+  border: 2px solid transparent;
+}
+
+.btn-primary:hover:not(:disabled) {
+  box-shadow: 0 0 30px rgba(0, 217, 255, 0.6), 
+              0 0 60px rgba(181, 55, 242, 0.3);
+  transform: translateY(-2px);
+}
+
+.btn-primary:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+/* Secondary Button */
+.btn-secondary {
+  background: transparent;
+  color: var(--color-neon-cyan);
+  border: 2px solid var(--color-neon-cyan);
+  box-shadow: inset 0 0 20px rgba(0, 217, 255, 0.1);
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background: rgba(0, 217, 255, 0.1);
+  box-shadow: inset 0 0 20px rgba(0, 217, 255, 0.2),
+              0 0 20px rgba(0, 217, 255, 0.3);
+  transform: translateY(-2px);
+}
+
+/* Danger Button */
+.btn-danger {
+  background: linear-gradient(135deg, var(--color-neon-pink), var(--color-neon-orange));
+  color: white;
+  box-shadow: var(--shadow-neon-pink);
+}
+
+.btn-danger:hover:not(:disabled) {
+  box-shadow: 0 0 30px rgba(255, 0, 110, 0.6),
+              0 0 60px rgba(255, 102, 0, 0.3);
+  transform: translateY(-2px);
+}
+
+/* Input styles */
+input, textarea, select {
+  width: 100%;
+  padding: 12px 16px;
+  background-color: var(--color-bg-input);
+  border: 2px solid transparent;
+  border-radius: 6px;
+  color: var(--color-text-primary);
+  font-family: inherit;
+  font-size: 16px;
+  transition: all var(--transition-fast);
+}
+
+input::placeholder, textarea::placeholder {
+  color: var(--color-text-muted);
+}
+
+input:focus, textarea:focus, select:focus {
+  outline: none;
+  background-color: rgba(0, 217, 255, 0.05);
+  border-color: var(--color-neon-cyan);
+  box-shadow: inset 0 0 0 1px var(--color-neon-cyan),
+              0 0 20px rgba(0, 217, 255, 0.2);
+}
+
+/* Label styles */
+label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  text-transform: uppercase;
+  font-size: 13px;
+  letter-spacing: 0.5px;
+}
+
+/* Card styles */
+.card {
+  background-color: var(--color-bg-card);
+  border: 1px solid rgba(0, 217, 255, 0.2);
+  border-radius: 12px;
+  padding: 24px;
+  transition: all var(--transition-smooth);
+}
+
+.card:hover {
+  border-color: var(--color-neon-cyan);
+  box-shadow: 0 0 30px rgba(0, 217, 255, 0.15);
+}
+
+/* Container styles */
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* Gradient text */
+.gradient-text {
+  background: linear-gradient(135deg, var(--color-neon-cyan), var(--color-neon-pink), var(--color-neon-purple));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Alert/Error styles */
+.alert-error {
+  background-color: rgba(255, 0, 110, 0.1);
+  border: 1px solid var(--color-neon-pink);
+  border-radius: 6px;
+  padding: 12px 16px;
+  color: var(--color-neon-pink);
+  margin-bottom: 20px;
+  font-size: 14px;
+}
+
+.alert-success {
+  background-color: rgba(57, 255, 20, 0.1);
+  border: 1px solid var(--color-neon-lime);
+  border-radius: 6px;
+  padding: 12px 16px;
+  color: var(--color-neon-lime);
+  margin-bottom: 20px;
+  font-size: 14px;
+}
+
+/* Scrollbar styles */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-bg-darker);
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, var(--color-neon-cyan), var(--color-neon-purple));
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, var(--color-neon-purple), var(--color-neon-cyan));
+}
+
+/* Loading spinner */
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.spinner {
+  border: 3px solid rgba(0, 217, 255, 0.2);
+  border-top: 3px solid var(--color-neon-cyan);
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+  box-shadow: var(--shadow-neon-cyan);
+}
+
+/* Utility classes */
+.text-center {
+  text-align: center;
+}
+
+.text-muted {
+  color: var(--color-text-muted);
+}
+
+.mt-20 {
+  margin-top: 20px;
+}
+
+.mb-20 {
+  margin-bottom: 20px;
+}
+
+.p-20 {
+  padding: 20px;
+}
