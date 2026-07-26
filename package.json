@@ -17,7 +17,9 @@
     "ws": "^8.14.0",
     "@prisma/client": "^5.7.0",
     "jsonwebtoken": "^9.0.0",
-    "bcrypt": "^5.1.0"
+    "bcrypt": "^5.1.0",
+    "speakeasy": "^2.0.0",
+    "qrcode": "^1.5.3"
   },
   "devDependencies": {
     "@types/node": "^20.4.2",
@@ -25,6 +27,8 @@
     "@types/react-dom": "^18.2.7",
     "@types/jsonwebtoken": "^9.0.7",
     "@types/bcrypt": "^5.0.2",
+    "@types/speakeasy": "^2.0.10",
+    "@types/qrcode": "^1.5.5",
     "prisma": "^5.7.0"
   }
 }
