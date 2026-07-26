@@ -27,6 +27,11 @@ export default async function handler(
       return res.status(401).json({ error: 'Invalid credentials' });
     }
 
+    // Check if email is verified
+    if (!user.emailVerified) {
+      return res.status(403).json({ error: 'Please verify your email before logging in.' });
+    }
+
     // Check password
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {

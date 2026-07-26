@@ -1,7 +1,8 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import bcrypt from 'bcrypt';
+import crypto from 'crypto';
 import { prisma } from '@/lib/db';
-import { generateToken } from '@/lib/jwt';
+import { sendVerificationEmail } from '@/lib/email';
 
 export default async function handler(
   req: NextApiRequest,
@@ -30,11 +31,12 @@ export default async function handler(
     // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Create user
+    // Create user (unverified)
     const user = await prisma.user.create({
       data: {
         email,
         password: hashedPassword,
+        emailVerified: false,
       },
       select: {
         id: true,
@@ -42,13 +44,23 @@ export default async function handler(
       },
     });
 
-    // Generate token
-    const token = generateToken(user.id);
+    // Create verification token (24 hours)
+    const token = crypto.randomBytes(32).toString('hex');
+    await prisma.verificationToken.create({
+      data: {
+        token,
+        type: 'email',
+        userId: user.id,
+        expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000),
+      },
+    });
+
+    // Send verification email
+    await sendVerificationEmail(email, token);
 
     res.status(201).json({
       success: true,
-      user,
-      token,
+      message: 'Account created! Check your email to verify your account.',
     });
   } catch (error) {
     console.error('Signup error:', error);
