@@ -15,12 +15,16 @@
     "typescript": "^5.1.6",
     "axios": "^1.6.0",
     "ws": "^8.14.0",
-    "@prisma/client": "^5.7.0"
+    "@prisma/client": "^5.7.0",
+    "jsonwebtoken": "^9.0.0",
+    "bcrypt": "^5.1.0"
   },
   "devDependencies": {
     "@types/node": "^20.4.2",
     "@types/react": "^18.2.15",
     "@types/react-dom": "^18.2.7",
+    "@types/jsonwebtoken": "^9.0.7",
+    "@types/bcrypt": "^5.0.2",
     "prisma": "^5.7.0"
   }
 }
