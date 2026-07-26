@@ -1,0 +1,13 @@
+{
+  "version": 2,
+  "projects": [
+    {
+      "name": "source-ninja-frontend",
+      "rootDirectory": "frontend"
+    },
+    {
+      "name": "source-ninja-backend",
+      "rootDirectory": "backend"
+    }
+  ]
+}
