@@ -33,9 +33,10 @@ export default function Editor() {
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [showShare, setShowShare] = useState(false);
-  const [inviteEmail, setInviteEmail] = useState('');
+  const [inviteUserId, setInviteUserId] = useState('');
   const [inviteRole, setInviteRole] = useState('editor');
   const [inviteStatus, setInviteStatus] = useState('');
+  const [collaborators, setCollaborators] = useState<{id: string; role: string; user: {id: string; email: string}}[]>([]);
   const canvasRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -140,15 +141,39 @@ export default function Editor() {
     setInviteStatus('');
     try {
       const token = localStorage.getItem('token');
-      await axios.post('/api/invites/create', {
-        layoutId: id,
-        email: inviteEmail,
+      const res = await axios.post(`/api/layouts/${id}/collaborators`, {
+        userId: inviteUserId,
         role: inviteRole,
       }, { headers: { Authorization: `Bearer ${token}` } });
-      setInviteStatus('✓ Invite sent!');
-      setInviteEmail('');
+      setInviteStatus('✓ Collaborator added!');
+      setInviteUserId('');
+      setCollaborators([...collaborators, res.data.collaborator]);
     } catch (err: any) {
-      setInviteStatus('✗ ' + (err.response?.data?.error || 'Failed to send invite'));
+      setInviteStatus('✗ ' + (err.response?.data?.error || 'Failed to add collaborator'));
+    }
+  };
+
+  const fetchCollaborators = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const res = await axios.get(`/api/layouts/${id}/collaborators`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setCollaborators(res.data.collaborators || []);
+    } catch {}
+  };
+
+  const handleRemoveCollaborator = async (userId: string) => {
+    if (!confirm('Remove this collaborator?')) return;
+    try {
+      const token = localStorage.getItem('token');
+      await axios.delete(`/api/layouts/${id}/collaborators`, {
+        headers: { Authorization: `Bearer ${token}` },
+        data: { userId },
+      });
+      setCollaborators(collaborators.filter(c => c.user.id !== userId));
+    } catch (err: any) {
+      setInviteStatus('✗ ' + (err.response?.data?.error || 'Failed to remove'));
     }
   };
 
@@ -191,21 +216,21 @@ export default function Editor() {
             <button onClick={saveLayout} style={{ width: '100%', padding: '10px', marginBottom: '10px', cursor: 'pointer', backgroundColor: '#28a745', color: 'white', border: 'none', borderRadius: '4px' }}>
               Save Layout
             </button>
-            <button onClick={() => setShowShare(!showShare)} style={{ width: '100%', padding: '10px', marginBottom: '20px', cursor: 'pointer', backgroundColor: '#6f42c1', color: 'white', border: 'none', borderRadius: '4px' }}>
-              {showShare ? '✕ Close Share' : '👥 Share / Invite'}
+            <button onClick={() => { setShowShare(!showShare); if (!showShare) fetchCollaborators(); }} style={{ width: '100%', padding: '10px', marginBottom: '20px', cursor: 'pointer', backgroundColor: '#6f42c1', color: 'white', border: 'none', borderRadius: '4px' }}>
+              {showShare ? '✕ Close Share' : '👥 Share / Collaborators'}
             </button>
 
             {showShare && (
               <div style={{ background: '#e8e8f8', borderRadius: '8px', padding: '16px', marginBottom: '20px', border: '1px solid #ccc' }}>
-                <h4 style={{ margin: '0 0 12px 0', fontSize: '14px' }}>Invite Collaborator</h4>
+                <h4 style={{ margin: '0 0 12px 0', fontSize: '14px' }}>Add Collaborator by User ID</h4>
                 <form onSubmit={handleInvite}>
                   <input
-                    type="email"
-                    placeholder="Email address"
-                    value={inviteEmail}
-                    onChange={e => setInviteEmail(e.target.value)}
+                    type="text"
+                    placeholder="Paste their User ID"
+                    value={inviteUserId}
+                    onChange={e => setInviteUserId(e.target.value)}
                     required
-                    style={{ width: '100%', padding: '8px', marginBottom: '8px', boxSizing: 'border-box' as const, borderRadius: '4px', border: '1px solid #ccc' }}
+                    style={{ width: '100%', padding: '8px', marginBottom: '8px', boxSizing: 'border-box' as const, borderRadius: '4px', border: '1px solid #ccc', fontSize: '12px' }}
                   />
                   <select
                     value={inviteRole}
@@ -216,7 +241,7 @@ export default function Editor() {
                     <option value="editor">Editor (can edit)</option>
                   </select>
                   <button type="submit" style={{ width: '100%', padding: '8px', backgroundColor: '#6f42c1', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>
-                    Send Invite
+                    Add Collaborator
                   </button>
                   {inviteStatus && (
                     <p style={{ margin: '8px 0 0', fontSize: '13px', color: inviteStatus.startsWith('✓') ? 'green' : 'red' }}>
@@ -224,6 +249,23 @@ export default function Editor() {
                     </p>
                   )}
                 </form>
+
+                {collaborators.length > 0 && (
+                  <div style={{ marginTop: '16px' }}>
+                    <h4 style={{ margin: '0 0 8px 0', fontSize: '13px', color: '#555' }}>Current Collaborators</h4>
+                    {collaborators.map(c => (
+                      <div key={c.user.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '6px 0', borderBottom: '1px solid #ddd', fontSize: '12px' }}>
+                        <div>
+                          <div style={{ fontWeight: '600' }}>{c.user.email}</div>
+                          <div style={{ color: '#888', fontSize: '11px' }}>Role: {c.role} · ID: {c.user.id.slice(0, 8)}...</div>
+                        </div>
+                        <button onClick={() => handleRemoveCollaborator(c.user.id)} style={{ padding: '4px 8px', background: 'rgba(255,0,0,0.1)', border: '1px solid rgba(255,0,0,0.3)', color: 'red', borderRadius: '4px', cursor: 'pointer', fontSize: '11px' }}>
+                          Remove
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             )}
 

@@ -9,11 +9,15 @@ interface Layout {
   description?: string;
   createdAt: string;
   updatedAt: string;
+  isOwner?: boolean;
+  role?: string;
+  user?: { id: string; email: string };
 }
 
 export default function Dashboard() {
   const router = useRouter();
   const [layouts, setLayouts] = useState<Layout[]>([]);
+  const [sharedLayouts, setSharedLayouts] = useState<Layout[]>([]);
   const [loading, setLoading] = useState(true);
   const [newTitle, setNewTitle] = useState('');
   const [error, setError] = useState('');
@@ -39,6 +43,7 @@ export default function Dashboard() {
         }
       );
       setLayouts(response.data.layouts || []);
+      setSharedLayouts(response.data.sharedLayouts || []);
     } catch (err: any) {
       setError('Failed to load layouts');
     } finally {
@@ -73,6 +78,19 @@ export default function Dashboard() {
     localStorage.removeItem('token');
     localStorage.removeItem('userId');
     router.push('/login');
+  };
+
+  const handleLeaveLayout = async (layoutId: string) => {
+    if (!confirm('Leave this shared layout?')) return;
+    try {
+      const token = localStorage.getItem('token');
+      await axios.post(`/api/layouts/${layoutId}/leave`, {}, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setSharedLayouts(sharedLayouts.filter(l => l.id !== layoutId));
+    } catch (err: any) {
+      setError(err.response?.data?.error || 'Failed to leave layout');
+    }
   };
 
   const styles = {
@@ -323,6 +341,54 @@ export default function Dashboard() {
               </div>
             ))}
           </div>
+        )}
+
+        {/* Shared Layouts Section */}
+        {sharedLayouts.length > 0 && (
+          <>
+            <h2 style={{ ...styles.title, fontSize: '22px', margin: '32px 0 16px' }}>
+              Shared With Me
+            </h2>
+            <div style={styles.grid}>
+              {sharedLayouts.map((layout) => (
+                <div
+                  key={layout.id}
+                  style={{
+                    ...styles.layoutCard,
+                    borderColor: buttonHovered === `shared-${layout.id}` ? 'rgba(181, 55, 242, 0.6)' : 'rgba(181, 55, 242, 0.3)',
+                    boxShadow: buttonHovered === `shared-${layout.id}`
+                      ? '0 0 20px rgba(181, 55, 242, 0.4)'
+                      : '0 8px 16px rgba(181, 55, 242, 0.05)',
+                    transform: buttonHovered === `shared-${layout.id}` ? 'translateY(-4px)' : 'translateY(0)',
+                  }}
+                  onMouseEnter={() => setButtonHovered(`shared-${layout.id}`)}
+                  onMouseLeave={() => setButtonHovered(null)}
+                >
+                  <div style={{ ...styles.layoutTitle, color: '#b537f2' }}>{layout.name}</div>
+                  <div style={{ ...styles.layoutMeta, color: '#a8b5d1', marginBottom: '4px' }}>
+                    👤 Owner: {layout.user?.email}
+                  </div>
+                  <div style={{ ...styles.layoutMeta, color: '#a8b5d1', marginBottom: '12px' }}>
+                    Role: <span style={{ color: '#00d9ff', fontWeight: '600', textTransform: 'capitalize' }}>{layout.role}</span>
+                  </div>
+                  <div style={{ display: 'flex', gap: '8px' }}>
+                    <Link
+                      href={`/editor/${layout.id}`}
+                      style={{ color: '#b537f2', textDecoration: 'none', fontWeight: '600', fontSize: '14px', flex: 1 }}
+                    >
+                      Open →
+                    </Link>
+                    <button
+                      onClick={(e) => { e.stopPropagation(); handleLeaveLayout(layout.id); }}
+                      style={{ padding: '4px 12px', background: 'rgba(255,0,110,0.15)', border: '1px solid rgba(255,0,110,0.4)', color: '#ff006e', borderRadius: '6px', cursor: 'pointer', fontSize: '12px' }}
+                    >
+                      Leave
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </>
         )}
       </div>
     </div>

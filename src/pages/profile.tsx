@@ -40,8 +40,8 @@ export default function Profile() {
         }
       );
 
-      setUser(response.data);
-      setUsername(response.data.username);
+      setUser(response.data.user);
+      setUsername(response.data.user?.email || '');
       setLoading(false);
     } catch (err: any) {
       localStorage.removeItem('token');

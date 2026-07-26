@@ -7,23 +7,35 @@ async function handler(
   res: NextApiResponse
 ) {
   if (req.method === 'GET') {
-    // Get all layouts for user
+    // Get owned layouts + collaborated layouts
     try {
-      const layouts = await prisma.layout.findMany({
+      const ownedLayouts = await prisma.layout.findMany({
         where: { userId: req.userId },
         select: {
-          id: true,
-          name: true,
-          description: true,
-          createdAt: true,
-          updatedAt: true,
+          id: true, name: true, description: true,
+          createdAt: true, updatedAt: true,
+          user: { select: { id: true, email: true } },
         },
         orderBy: { updatedAt: 'desc' },
       });
 
+      const sharedLayouts = await prisma.layoutCollaborator.findMany({
+        where: { userId: req.userId },
+        include: {
+          layout: {
+            select: {
+              id: true, name: true, description: true,
+              createdAt: true, updatedAt: true,
+              user: { select: { id: true, email: true } },
+            },
+          },
+        },
+      });
+
       return res.status(200).json({
         success: true,
-        layouts,
+        layouts: ownedLayouts.map(l => ({ ...l, isOwner: true, role: 'owner' })),
+        sharedLayouts: sharedLayouts.map(c => ({ ...c.layout, isOwner: false, role: c.role })),
       });
     } catch (error) {
       console.error('Get layouts error:', error);
