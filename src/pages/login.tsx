@@ -21,7 +21,7 @@ export default function Login() {
 
     try {
       const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/auth/login`,
+        `/api/auth/login`,
         { email, password }
       );
 
@@ -41,7 +41,7 @@ export default function Login() {
     setLoading(true);
 
     try {
-      await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/verify-email`, {
+      await axios.post(`/api/auth/verify-email`, {
         email: verifyEmail,
         token: verifyToken,
       });

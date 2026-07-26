@@ -33,7 +33,7 @@ export default function Signup() {
 
     try {
       const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/auth/signup`,
+        `/api/auth/signup`,
         { email, password, username }
       );
 

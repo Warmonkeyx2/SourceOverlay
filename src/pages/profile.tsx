@@ -32,7 +32,7 @@ export default function Profile() {
       }
 
       const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/auth/me`,
+        `/api/auth/me`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -59,7 +59,7 @@ export default function Profile() {
     try {
       const token = localStorage.getItem('token');
       await axios.put(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/users/profile`,
+        `/api/users/profile`,
         { username },
         {
           headers: {

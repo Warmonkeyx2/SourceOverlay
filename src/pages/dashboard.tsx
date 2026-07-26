@@ -32,7 +32,7 @@ export default function Dashboard() {
     try {
       const token = localStorage.getItem('token');
       const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/layouts`,
+        `/api/layouts`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -54,7 +54,7 @@ export default function Dashboard() {
 
     try {
       const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/layouts`,
+        `/api/layouts`,
         { title: newTitle },
         {
           headers: { Authorization: `Bearer ${token}` },

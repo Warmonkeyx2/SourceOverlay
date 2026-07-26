@@ -22,11 +22,12 @@ export default function MFASettings() {
     try {
       const tokenFromStorage = localStorage.getItem('token');
       const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/mfa/status`,
+        `/api/auth/me`,
         {
           headers: { Authorization: `Bearer ${tokenFromStorage}` },
         }
-      );
+      );  
+      setMfaEnabled(response.data.user?.mfaEnabled || false);
       setMfaEnabled(response.data.mfaEnabled);
     } catch (err: any) {
       setError('Failed to check MFA status');
@@ -39,7 +40,7 @@ export default function MFASettings() {
     try {
       const tokenFromStorage = localStorage.getItem('token');
       const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/mfa/setup`,
+        `/api/mfa/setup`,
         {},
         {
           headers: { Authorization: `Bearer ${tokenFromStorage}` },
@@ -67,7 +68,7 @@ export default function MFASettings() {
     try {
       const tokenFromStorage = localStorage.getItem('token');
       await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/mfa/enable`,
+        `/api/mfa/verify`,
         { secret, token },
         {
           headers: { Authorization: `Bearer ${tokenFromStorage}` },
@@ -87,7 +88,7 @@ export default function MFASettings() {
     try {
       const tokenFromStorage = localStorage.getItem('token');
       await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/mfa/disable`,
+        `/api/mfa/disable`,
         {},
         {
           headers: { Authorization: `Bearer ${tokenFromStorage}` },

@@ -43,7 +43,7 @@ export default function Editor() {
   const fetchLayout = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/layouts/${id}`, {
+      const response = await axios.get(`/api/layouts/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = JSON.parse(response.data.data || '[]');
@@ -59,7 +59,7 @@ export default function Editor() {
   const saveLayout = async () => {
     try {
       const token = localStorage.getItem('token');
-      await axios.put(`${process.env.NEXT_PUBLIC_API_URL}/api/layouts/${id}`, {
+      await axios.put(`/api/layouts/${id}`, {
         title: layout?.title,
         bgColor: layout?.bg_color,
         data: sources,
