@@ -2,7 +2,7 @@ import { Resend } from 'resend';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-const FROM_EMAIL = 'SourceOverlay <noreply@sourceoverlay.com>';
+const FROM_EMAIL = 'SourceOverlay <onboarding@resend.dev>';
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://source-overlay-git-main-warmonkeyxs-projects.vercel.app';
 
 export async function sendVerificationEmail(email: string, token: string) {
