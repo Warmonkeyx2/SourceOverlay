@@ -18,6 +18,17 @@ export default function AdminPanel() {
   const [error, setError] = useState('');
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
 
+  const handleVerify = async (email: string) => {
+    try {
+      await axios.post('/api/admin/verify-user', { email }, {
+        headers: { 'x-admin-secret': secret || sessionStorage.getItem('adminSecret') || '' },
+      });
+      setUsers(users.map(u => u.email === email ? { ...u, emailVerified: true } : u));
+    } catch (err: any) {
+      setError(err.response?.data?.error || 'Failed to verify user');
+    }
+  };
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -140,7 +151,12 @@ export default function AdminPanel() {
                       <button onClick={() => setDeleteConfirm(null)} style={styles.cancelBtn}>Cancel</button>
                     </>
                   ) : (
-                    <button onClick={() => setDeleteConfirm(user.email)} style={styles.dangerBtn}>Delete</button>
+                    <div style={{ display: 'flex', gap: '8px' }}>
+                      {!user.emailVerified && (
+                        <button onClick={() => handleVerify(user.email)} style={{ ...styles.dangerBtn, color: '#00d9ff', borderColor: 'rgba(0,217,255,0.4)', background: 'rgba(0,217,255,0.1)' }}>✓ Verify</button>
+                      )}
+                      <button onClick={() => setDeleteConfirm(user.email)} style={styles.dangerBtn}>Delete</button>
+                    </div>
                   )}
                 </td>
               </tr>
