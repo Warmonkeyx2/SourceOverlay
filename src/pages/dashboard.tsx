@@ -5,9 +5,10 @@ import { useRouter } from 'next/router';
 
 interface Layout {
   id: string;
-  title: string;
-  created_at: string;
-  updated_at: string;
+  name: string;
+  description?: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export default function Dashboard() {
@@ -37,7 +38,7 @@ export default function Dashboard() {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
-      setLayouts(response.data);
+      setLayouts(response.data.layouts || []);
     } catch (err: any) {
       setError('Failed to load layouts');
     } finally {
@@ -55,13 +56,13 @@ export default function Dashboard() {
     try {
       const response = await axios.post(
         `/api/layouts`,
-        { title: newTitle },
+        { name: newTitle },
         {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
 
-      setLayouts([...layouts, response.data]);
+      setLayouts([...layouts, response.data.layout]);
       setNewTitle('');
     } catch (err: any) {
       setError(err.response?.data?.error || 'Failed to create layout');
@@ -301,12 +302,12 @@ export default function Dashboard() {
                 onMouseLeave={() => setButtonHovered(null)}
                 onClick={() => router.push(`/editor/${layout.id}`)}
               >
-                <div style={styles.layoutTitle}>{layout.title}</div>
+                <div style={styles.layoutTitle}>{layout.name}</div>
                 <div style={styles.layoutMeta}>
-                  Created: {new Date(layout.created_at).toLocaleDateString()}
+                  Created: {new Date(layout.createdAt).toLocaleDateString()}
                 </div>
                 <div style={styles.layoutMeta}>
-                  Updated: {new Date(layout.updated_at).toLocaleDateString()}
+                  Updated: {new Date(layout.updatedAt).toLocaleDateString()}
                 </div>
                 <Link 
                   href={`/editor/${layout.id}`}
