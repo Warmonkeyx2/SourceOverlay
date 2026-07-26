@@ -1,0 +1,92 @@
+// This is your Prisma schema file.
+// Learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String     @id @default(cuid())
+  email     String     @unique
+  password  String
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  
+  // MFA
+  mfaSecret String?
+  mfaEnabled Boolean @default(false)
+  
+  // Relations
+  layouts   Layout[]
+  collaborations LayoutCollaborator[]
+  invites   Invite[]
+  
+  @@map("users")
+}
+
+model Layout {
+  id        String     @id @default(cuid())
+  name      String
+  description String?
+  settings  Json       @default("{}")
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  
+  // Relations
+  userId    String
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  collaborators LayoutCollaborator[]
+  invites   Invite[]
+  
+  @@index([userId])
+  @@map("layouts")
+}
+
+model LayoutCollaborator {
+  id        String     @id @default(cuid())
+  role      String     @default("viewer") // "viewer", "editor", "owner"
+  createdAt DateTime   @default(now())
+  
+  // Relations
+  layoutId  String
+  layout    Layout     @relation(fields: [layoutId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@unique([layoutId, userId])
+  @@index([userId])
+  @@map("layout_collaborators")
+}
+
+model LayoutPermission {
+  id        String     @id @default(cuid())
+  action    String     // "read", "write", "delete", "share"
+  role      String     // "viewer", "editor", "owner"
+  createdAt DateTime   @default(now())
+  
+  @@map("layout_permissions")
+}
+
+model Invite {
+  id        String     @id @default(cuid())
+  email     String
+  token     String     @unique
+  role      String     @default("viewer")
+  expiresAt DateTime
+  createdAt DateTime   @default(now())
+  
+  // Relations
+  layoutId  String
+  layout    Layout     @relation(fields: [layoutId], references: [id], onDelete: Cascade)
+  invitedBy String
+  inviter   User       @relation(fields: [invitedBy], references: [id], onDelete: Cascade)
+  
+  @@index([layoutId])
+  @@index([invitedBy])
+  @@map("invites")
+}
