@@ -17,22 +17,22 @@ export default async function handler(
     return res.status(401).json({ error: 'Unauthorized' });
   }
 
-  const { email } = req.body;
+  const { userId } = req.body;
 
-  if (!email) {
-    return res.status(400).json({ error: 'Email required' });
+  if (!userId) {
+    return res.status(400).json({ error: 'userId required' });
   }
 
   try {
-    const user = await prisma.user.findUnique({ where: { email } });
+    const user = await prisma.user.findUnique({ where: { id: userId } });
 
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }
 
-    await prisma.user.delete({ where: { email } });
+    await prisma.user.delete({ where: { id: userId } });
 
-    res.status(200).json({ success: true, message: `User ${email} deleted` });
+    res.status(200).json({ success: true, message: `User ${userId} deleted` });
   } catch (error) {
     console.error('Delete user error:', error);
     res.status(500).json({ error: 'Internal server error' });

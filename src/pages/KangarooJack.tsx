@@ -3,7 +3,6 @@ import axios from 'axios';
 
 interface User {
   id: string;
-  email: string;
   emailVerified: boolean;
   mfaEnabled: boolean;
   createdAt: string;
@@ -17,17 +16,6 @@ export default function AdminPanel() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
-
-  const handleVerify = async (email: string) => {
-    try {
-      await axios.post('/api/admin/verify-user', { email }, {
-        headers: { 'x-admin-secret': secret || sessionStorage.getItem('adminSecret') || '' },
-      });
-      setUsers(users.map(u => u.email === email ? { ...u, emailVerified: true } : u));
-    } catch (err: any) {
-      setError(err.response?.data?.error || 'Failed to verify user');
-    }
-  };
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -47,16 +35,27 @@ export default function AdminPanel() {
     }
   };
 
-  const handleDelete = async (email: string) => {
+  const handleDelete = async (userId: string) => {
     try {
       await axios.delete('/api/admin/delete-user', {
         headers: { 'x-admin-secret': secret || sessionStorage.getItem('adminSecret') || '' },
-        data: { email },
+        data: { userId },
       });
-      setUsers(users.filter(u => u.email !== email));
+      setUsers(users.filter(u => u.id !== userId));
       setDeleteConfirm(null);
     } catch (err: any) {
       setError(err.response?.data?.error || 'Failed to delete user');
+    }
+  };
+
+  const handleVerify = async (userId: string) => {
+    try {
+      await axios.post('/api/admin/verify-user', { userId }, {
+        headers: { 'x-admin-secret': secret || sessionStorage.getItem('adminSecret') || '' },
+      });
+      setUsers(users.map(u => u.id === userId ? { ...u, emailVerified: true } : u));
+    } catch (err: any) {
+      setError(err.response?.data?.error || 'Failed to verify user');
     }
   };
 

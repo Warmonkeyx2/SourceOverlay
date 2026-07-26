@@ -12,19 +12,19 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const { email } = req.body;
-  if (!email) return res.status(400).json({ error: 'Email required' });
+  const { userId } = req.body;
+  if (!userId) return res.status(400).json({ error: 'userId required' });
 
-  const user = await prisma.user.findUnique({ where: { email } });
+  const user = await prisma.user.findUnique({ where: { id: userId } });
   if (!user) return res.status(404).json({ error: 'User not found' });
 
   await prisma.user.update({
-    where: { email },
+    where: { id: userId },
     data: { emailVerified: true },
   });
 
   // Clean up any pending verification tokens
-  await prisma.verificationToken.deleteMany({ where: { userId: user.id } });
+  await prisma.verificationToken.deleteMany({ where: { userId } });
 
-  res.status(200).json({ success: true, message: `${email} verified` });
+  res.status(200).json({ success: true, message: `${userId} verified` });
 }
