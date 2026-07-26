@@ -5,6 +5,7 @@ import { connect } from './db';
 import layoutRoutes from './routes/layouts';
 import authRoutes from './routes/auth';
 import invitesRoutes from './routes/invites';
+import mfaRoutes from './routes/mfa';
 import http from 'http';
 
 dotenv.config();
@@ -19,6 +20,7 @@ app.use(express.json());
 app.use('/api/auth', authRoutes);
 app.use('/api/layouts', layoutRoutes);
 app.use('/api/invites', invitesRoutes);
+app.use('/api', mfaRoutes);
 
 app.get('/health', (req, res) => {
   res.json({ status: 'ok' });
