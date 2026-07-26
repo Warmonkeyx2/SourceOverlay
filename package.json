@@ -1,14 +1,26 @@
 {
-  "name": "source-overlay-studio",
+  "name": "source-overlay-studio-frontend",
   "version": "1.0.0",
-  "description": "OBS-like web-based overlay editor for any streaming service",
-  "private": true,
+  "description": "Frontend for Source Overlay Studio",
   "scripts": {
-    "setup": "node setup.js",
-    "dev": "concurrently \"cd backend && npm run dev\" \"cd frontend && npm run dev\"",
-    "start": "concurrently \"cd backend && npm start\" \"cd frontend && npm start\""
+    "dev": "next dev -p 4500",
+    "build": "next build",
+    "start": "next start -p 4500",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "next": "^14.0.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "typescript": "^5.1.6",
+    "axios": "^1.6.0",
+    "ws": "^8.14.0",
+    "@prisma/client": "^5.7.0"
   },
   "devDependencies": {
-    "concurrently": "^8.2.0"
+    "@types/node": "^20.4.2",
+    "@types/react": "^18.2.15",
+    "@types/react-dom": "^18.2.7",
+    "prisma": "^5.7.0"
   }
 }
