@@ -9,6 +9,9 @@ export default function Login() {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [resendSuccess, setResendSuccess] = useState('');
+  const [resendLoading, setResendLoading] = useState(false);
+  const [showResend, setShowResend] = useState(false);
   const [verifying, setVerifying] = useState(false);
   const [verifyEmail, setVerifyEmail] = useState('');
   const [verifyToken, setVerifyToken] = useState('');
@@ -29,9 +32,27 @@ export default function Login() {
       localStorage.setItem('userId', response.data.userId);
       router.push('/dashboard');
     } catch (err: any) {
-      setError(err.response?.data?.error || 'Login failed');
+      const errMsg = err.response?.data?.error || 'Login failed';
+      setError(errMsg);
+      if (errMsg.includes('verify your email')) {
+        setShowResend(true);
+      }
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleResendVerification = async () => {
+    setResendLoading(true);
+    setResendSuccess('');
+    try {
+      await axios.post('/api/auth/resend-verification', { email });
+      setResendSuccess('Verification email sent! Check your inbox.');
+      setShowResend(false);
+    } catch (err: any) {
+      setError(err.response?.data?.error || 'Failed to resend email');
+    } finally {
+      setResendLoading(false);
     }
   };
 
@@ -207,6 +228,23 @@ export default function Login() {
               </div>
 
               {error && <div style={styles.error}>{error}</div>}
+
+              {resendSuccess && (
+                <div style={{ ...styles.error, background: 'rgba(0, 217, 255, 0.1)', borderColor: 'rgba(0, 217, 255, 0.4)', color: '#00d9ff' }}>
+                  {resendSuccess}
+                </div>
+              )}
+
+              {showResend && (
+                <button
+                  type="button"
+                  onClick={handleResendVerification}
+                  disabled={resendLoading}
+                  style={{ ...styles.button, background: 'rgba(0, 217, 255, 0.15)', color: '#00d9ff', border: '1px solid rgba(0, 217, 255, 0.4)', boxShadow: 'none', marginBottom: '12px', opacity: resendLoading ? 0.6 : 1 }}
+                >
+                  {resendLoading ? 'Sending...' : '📧 Resend Verification Email'}
+                </button>
+              )}
 
               <button
                 type="submit"
