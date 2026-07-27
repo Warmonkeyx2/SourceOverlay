@@ -308,7 +308,7 @@ export default function Editor() {
   };
 
   return (
-    <div style={styles.container} onMouseMove={e => { handleMouseMove(e); handleResizeMove(e); }} onMouseUp={styles.canvas.cursor as any} onMouseLeave={handleMouseUp}>
+    <div style={styles.container} onMouseMove={e => { handleMouseMove(e); handleResizeMove(e); }} onMouseUp={handleMouseUp} onMouseLeave={handleMouseUp}>
       {/* Sidebar */}
       <div style={styles.sidebar}>
         <button onClick={() => setSidebarOpen(!sidebarOpen)} style={styles.toggleBtn}>
