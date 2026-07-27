@@ -16,6 +16,9 @@ export default function AdminPanel() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
+  const [resetPasswordUser, setResetPasswordUser] = useState<string | null>(null);
+  const [newPassword, setNewPassword] = useState('');
+  const [resetStatus, setResetStatus] = useState('');
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -56,6 +59,27 @@ export default function AdminPanel() {
       setUsers(users.map(u => u.id === userId ? { ...u, emailVerified: true } : u));
     } catch (err: any) {
       setError(err.response?.data?.error || 'Failed to verify user');
+    }
+  };
+
+  const handleResetPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setResetStatus('');
+    if (!newPassword || newPassword.length < 8) {
+      setResetStatus('✗ Password must be at least 8 characters');
+      return;
+    }
+    try {
+      await axios.post('/api/admin/reset-password', 
+        { userId: resetPasswordUser, newPassword },
+        { headers: { 'x-admin-secret': secret || sessionStorage.getItem('adminSecret') || '' } }
+      );
+      setResetStatus('✓ Password reset successfully');
+      setResetPasswordUser(null);
+      setNewPassword('');
+      setTimeout(() => setResetStatus(''), 3000);
+    } catch (err: any) {
+      setResetStatus('✗ ' + (err.response?.data?.error || 'Failed to reset password'));
     }
   };
 
@@ -150,11 +174,12 @@ export default function AdminPanel() {
                       <button onClick={() => setDeleteConfirm(null)} style={styles.cancelBtn}>Cancel</button>
                     </>
                   ) : (
-                    <div style={{ display: 'flex', gap: '8px' }}>
+                    <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
                       {!user.emailVerified && (
-                        <button onClick={() => handleVerify(user.id)} style={{ ...styles.dangerBtn, color: '#00d9ff', borderColor: 'rgba(0,217,255,0.4)', background: 'rgba(0,217,255,0.1)' }}>✓ Verify</button>
+                        <button onClick={() => handleVerify(user.id)} style={{ ...styles.dangerBtn, color: '#00d9ff', borderColor: 'rgba(0,217,255,0.4)', background: 'rgba(0,217,255,0.1)', fontSize: '11px', padding: '4px 8px' }}>✓ Verify</button>
                       )}
-                      <button onClick={() => setDeleteConfirm(user.id)} style={styles.dangerBtn}>Delete</button>
+                      <button onClick={() => setResetPasswordUser(user.id)} style={{ ...styles.dangerBtn, color: '#b08eff', borderColor: 'rgba(176, 142, 255, 0.4)', background: 'rgba(176, 142, 255, 0.1)', fontSize: '11px', padding: '4px 8px' }}>🔑 Reset</button>
+                      <button onClick={() => setDeleteConfirm(user.id)} style={{...styles.dangerBtn, fontSize: '11px', padding: '4px 8px'}}>Delete</button>
                     </div>
                   )}
                 </td>
@@ -165,6 +190,34 @@ export default function AdminPanel() {
             )}
           </tbody>
         </table>
+
+        {resetPasswordUser && (
+          <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.7)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
+            <div style={{ background: '#0a0e27', border: '1px solid rgba(0,217,255,0.2)', borderRadius: '12px', padding: '32px', maxWidth: '400px', width: '100%' }}>
+              <h2 style={{ ...styles.title, marginBottom: '8px' }}>Reset Password</h2>
+              <p style={{ color: '#a8b5d1', marginBottom: '20px', fontSize: '13px' }}>Enter a new password for <code style={{background: 'rgba(0,217,255,0.1)', padding: '2px 6px', borderRadius: '4px', fontSize: '11px'}}>{resetPasswordUser.slice(0, 12)}...</code></p>
+              <form onSubmit={handleResetPassword}>
+                <input
+                  type="password"
+                  placeholder="New password (min 8 chars)"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  style={styles.input}
+                  autoFocus
+                />
+                {resetStatus && (
+                  <p style={{ margin: '0 0 16px 0', fontSize: '13px', color: resetStatus.includes('✓') ? '#00d9ff' : '#ff006e' }}>
+                    {resetStatus}
+                  </p>
+                )}
+                <div style={{ display: 'flex', gap: '12px' }}>
+                  <button type="submit" style={styles.btn}>Set Password</button>
+                  <button type="button" onClick={() => { setResetPasswordUser(null); setNewPassword(''); setResetStatus(''); }} style={styles.cancelBtn}>Cancel</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
