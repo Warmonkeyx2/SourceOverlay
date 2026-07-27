@@ -1,6 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
+// Disable static prerendering to force dynamic server-rendering
+export async function getServerSideProps() {
+  return { props: {} };
+}
+
 interface User {
   id: string;
   emailVerified: boolean;
