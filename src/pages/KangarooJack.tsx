@@ -10,6 +10,7 @@ interface User {
 }
 
 export default function AdminPanel() {
+  // Admin panel for user management
   const [secret, setSecret] = useState('');
   const [authed, setAuthed] = useState(false);
   const [users, setUsers] = useState<User[]>([]);
