@@ -1,11 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
-// Disable static caching to force on-demand rendering
-export async function getStaticProps() {
-  return { revalidate: 0 };
-}
-
 interface User {
   id: string;
   emailVerified: boolean;
