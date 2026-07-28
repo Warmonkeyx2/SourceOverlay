@@ -1,5 +1,9 @@
 {
   "version": 2,
+  "framework": "nextjs",
   "buildCommand": "prisma migrate deploy && prisma generate && next build",
-  "outputDirectory": ".next"
+  "outputDirectory": ".next",
+  "env": {
+    "DATABASE_URL": "@database_url"
+  }
 }
