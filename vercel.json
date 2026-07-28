@@ -1,3 +1,5 @@
 {
-  "version": 2
+  "version": 2,
+  "buildCommand": "prisma migrate deploy && prisma generate && next build",
+  "outputDirectory": ".next"
 }
