@@ -10,7 +10,6 @@ interface User {
 }
 
 export default function AdminPanel() {
-  // Admin panel for user management
   const [secret, setSecret] = useState('');
   const [authed, setAuthed] = useState(false);
   const [users, setUsers] = useState<User[]>([]);
@@ -210,6 +209,19 @@ export default function AdminPanel() {
                   <p style={{ margin: '0 0 16px 0', fontSize: '13px', color: resetStatus.includes('✓') ? '#00d9ff' : '#ff006e' }}>
                     {resetStatus}
                   </p>
+                )}
+                <div style={{ display: 'flex', gap: '12px' }}>
+                  <button type="submit" style={styles.btn}>Set Password</button>
+                  <button type="button" onClick={() => { setResetPasswordUser(null); setNewPassword(''); setResetStatus(''); }} style={styles.cancelBtn}>Cancel</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
                 )}
                 <div style={{ display: 'flex', gap: '12px' }}>
                   <button type="submit" style={styles.btn}>Set Password</button>
